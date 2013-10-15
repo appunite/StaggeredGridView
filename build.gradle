@@ -11,6 +11,20 @@ buildscript {
 apply plugin: 'android-library'
 apply plugin: 'maven'
 
+repositories {
+    mavenCentral()
+    maven {url 'http://commondatastorage.googleapis.com/maven-repository/'}
+}
+
+configurations {
+    deployerJars
+}
+
+dependencies {
+    deployerJars 'com.googlesource.gerrit:gs-maven-wagon:3.3.1'
+    compile "com.appunite:android-support-v4:[7,)"
+}
+
 android {
     compileSdkVersion 18
     buildToolsVersion "18.0.1"
@@ -28,18 +42,76 @@ android {
     }
 }
 
-dependencies {
-    compile "com.android.support:support-v4:18.0.0"
+def baseVersionName = "1"
+if (project.hasProperty("versionSuffix")) {
+    project.ext.versionSuffix = project.versionSuffix
+} else {
+    project.ext.versionSuffix = "snapshot"
 }
+if (project.ext.versionSuffix) {
+    version = "${baseVersionName}-${project.versionSuffix}"
+} else {
+    version = "${baseVersionName}"
+}
+archivesBaseName = "library"
+group = "com.origamilabs"
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
-            pom.artifactId = "StaggeredGridView"
-            pom.groupId = "com.origamilabs.library"
-            pom.version = "1.0"
+task createPomFile {
+    project.ext.pomFile = pom {
+        version = project.version
+        artifactId = project.archivesBaseName
+        groupId = project.group
+        project {
+            name 'StaggeredGridView'
+            description 'A modified version of Android\'s experimental StaggeredGridView. Includes own OnItemClickListener and OnItemLongClickListener, selector, and fixed position restore.'
+            url 'https://github.com/appunite/StaggeredGridView'
+            inceptionYear '2013'
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+
+            scm {
+                url "https://github.com/appunite/StaggeredGridView"
+                connection "https://github.com/appunite/StaggeredGridView.git"
+            }
+            developers {
+                developer {
+                    name 'Maurycy Wojtowicz maurycy@origami.com'
+                }
+            }
         }
     }
 }
-task install(dependsOn: uploadArchives)
+
+task install(type: Upload, dependsOn: createPomFile) {
+    description = "Upload archives to local repository"
+    configuration = configurations.archives
+    repositories.mavenInstaller {
+        pom = project.ext.pomFile
+    }
+}
+
+Properties props = new Properties()
+def credentialsProperties = file("credentials.properties")
+if (credentialsProperties.exists()) {
+    props.load(new FileInputStream(credentialsProperties))
+}
+
+uploadArchives {
+    dependsOn createPomFile
+    repositories {
+        mavenDeployer {
+            configuration = configurations.deployerJars
+            repository(url: "gs://maven-repository") {
+                authentication(
+                        userName: "${props.getProperty('mavenUser', null)}" ,
+                        password: "${props.getProperty('mavenPassword', null)}")
+            }
+        }
+    }
+}

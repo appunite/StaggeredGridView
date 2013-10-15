@@ -167,7 +167,7 @@ public class StaggeredGridView extends ViewGroup {
      */
     Drawable mSelector;
 
-    boolean mDrawSelectorOnTop = false;
+    boolean mDrawTopSelector = false;
 
     /**
      * Delayed action for touch mode.
@@ -310,11 +310,11 @@ public class StaggeredGridView extends ViewGroup {
         if(attrs!=null){
         	TypedArray a=getContext().obtainStyledAttributes( attrs, R.styleable.StaggeredGridView);
             mColCount = a.getInteger(R.styleable.StaggeredGridView_numColumns, 2);
-            mDrawSelectorOnTop = a.getBoolean(R.styleable.StaggeredGridView_drawSelectorOnTop, false);
+            mDrawTopSelector = a.getBoolean(R.styleable.StaggeredGridView_drawTopSelector, false);
             mItemMargin = (int) a.getDimension(R.styleable.StaggeredGridView_itemMargin, 0);
         }else{
         	mColCount = 2;
-        	mDrawSelectorOnTop = false;
+        	mDrawTopSelector = false;
         }
 
         final ViewConfiguration vc = ViewConfiguration.get(context);
@@ -825,7 +825,7 @@ public class StaggeredGridView extends ViewGroup {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        final boolean drawSelectorOnTop = mDrawSelectorOnTop;
+        final boolean drawSelectorOnTop = mDrawTopSelector;
         if (!drawSelectorOnTop) {
             drawSelector(canvas);
         }
@@ -2633,10 +2633,10 @@ public class StaggeredGridView extends ViewGroup {
     }
 
 	public boolean isDrawSelectorOnTop() {
-		return mDrawSelectorOnTop;
+		return mDrawTopSelector;
 	}
 
 	public void setDrawSelectorOnTop(boolean mDrawSelectorOnTop) {
-		this.mDrawSelectorOnTop = mDrawSelectorOnTop;
+		this.mDrawTopSelector = mDrawSelectorOnTop;
 	}
 }

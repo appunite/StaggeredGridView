@@ -15,7 +15,7 @@ StaggeredGridView can be added as a custom view to any layout.
 
 Attributes supported (same behavior as GridView): 
  * numColumns : determines the amount of columns to be drawn
- * drawSelectorOnTop : determine if selector should be drawn on top
+ * drawTopSelector : determine if selector should be drawn on top
 
 ```xml
 
@@ -29,7 +29,7 @@ Attributes supported (same behavior as GridView):
     <com.origamilabs.library.views.StaggeredGridView
         android:id="@+id/staggeredGridView1"
         staggered:numColumns="2"
-        staggered:drawSelectorOnTop="true"
+        staggered:drawTopSelector="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
