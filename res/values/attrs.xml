@@ -2,7 +2,7 @@
 <resources>
     <declare-styleable name="StaggeredGridView">
         <attr name="drawTopSelector" format="boolean" />
-        <attr name="numColumns" format="integer" />
+        <attr name="columnsNumber" format="integer" />
         <attr name="itemMargin" format="dimension" />
     </declare-styleable>
 </resources>

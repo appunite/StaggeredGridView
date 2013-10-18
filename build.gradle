@@ -42,24 +42,14 @@ android {
     }
 }
 
-def baseVersionName = "1"
-if (project.hasProperty("versionSuffix")) {
-    project.ext.versionSuffix = project.versionSuffix
-} else {
-    project.ext.versionSuffix = "snapshot"
-}
-if (project.ext.versionSuffix) {
-    version = "${baseVersionName}-${project.versionSuffix}"
-} else {
-    version = "${baseVersionName}"
-}
+version = "1.0"
 archivesBaseName = "library"
 group = "com.origamilabs"
 
 task createPomFile {
     project.ext.pomFile = pom {
         version = project.version
-        artifactId = project.archivesBaseName
+            artifactId = project.archivesBaseName
         groupId = project.group
         project {
             name 'StaggeredGridView'
