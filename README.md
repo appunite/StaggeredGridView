@@ -44,6 +44,14 @@ onItemClick(StaggeredGridView parent, View view, int position, long id);
 onItemLongClick(StaggeredGridView parent, View view, int position, long id);
 ```
 
+The StaggeredGridView includes also own OnScrollListener because of not extending AdapterView.
+
+```java
+onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+
+onScrollStateChanged(AbsListView view, int scrollState)
+```
+
 ## Tests
 
 No tests have been written however I have tested this View manually with 2.2.2+ devices. Please report any issues.
