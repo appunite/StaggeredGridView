@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.5.+'
+        classpath 'com.android.tools.build:gradle:0.6.+'
     }
 }
 
@@ -42,7 +42,7 @@ android {
     }
 }
 
-version = "1.0"
+version = "1.1"
 archivesBaseName = "library"
 group = "com.origamilabs"
 
@@ -104,4 +104,8 @@ uploadArchives {
             }
         }
     }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
 }

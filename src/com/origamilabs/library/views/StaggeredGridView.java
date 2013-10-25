@@ -16,6 +16,8 @@ package com.origamilabs.library.views;
  * limitations under the License.
  *
  * modified by Maurycy Wojtowicz
+ * modified by Michal Moczulski
+ *
  *
  */
 
@@ -131,6 +133,7 @@ public class StaggeredGridView extends ViewGroup {
     private int mFlingVelocity;
     private float mLastTouchY;
     private float mLastTouchX;
+    private int mLastScrollState = OnScrollListener.SCROLL_STATE_IDLE;
     private float mTouchRemainderY;
     private int mActivePointerId;
     private int mMotionPosition;
@@ -218,6 +221,11 @@ public class StaggeredGridView extends ViewGroup {
      * The listener that receives notifications when an item is long clicked.
      */
     OnItemLongClickListener mOnItemLongClickListener;
+
+    /**
+     * The listener that receives notifications when list is scrolled
+     */
+    private OnScrollListener mOnScrollListener;
 
     /**
      * The last CheckForLongPress runnable we posted, if any
@@ -406,6 +414,7 @@ public class StaggeredGridView extends ViewGroup {
                 if (mTouchMode == TOUCH_MODE_FLINGING) {
                     // Catch!
                     mTouchMode = TOUCH_MODE_DRAGGING;
+                    reportScrollStateChange(OnScrollListener.SCROLL_STATE_TOUCH_SCROLL);
                     return true;
                 }
                 break;
@@ -425,6 +434,7 @@ public class StaggeredGridView extends ViewGroup {
 
                 if (Math.abs(dy) > mTouchSlop) {
                     mTouchMode = TOUCH_MODE_DRAGGING;
+                    reportScrollStateChange(OnScrollListener.SCROLL_STATE_TOUCH_SCROLL);
                     return true;
                 }
             }
@@ -491,6 +501,7 @@ public class StaggeredGridView extends ViewGroup {
 
                 if (Math.abs(dy) > mTouchSlop) {
                     mTouchMode = TOUCH_MODE_DRAGGING;
+                    reportScrollStateChange(OnScrollListener.SCROLL_STATE_TOUCH_SCROLL);
                 }
 
                 if (mTouchMode == TOUCH_MODE_DRAGGING) {
@@ -507,6 +518,7 @@ public class StaggeredGridView extends ViewGroup {
 
             case MotionEvent.ACTION_CANCEL:
                 mTouchMode = TOUCH_MODE_IDLE;
+                reportScrollStateChange(OnScrollListener.SCROLL_STATE_IDLE);
                 updateSelectorState();
                 setPressed(false);
                 View motionView = this.getChildAt(mMotionPosition - mFirstPosition);
@@ -524,6 +536,7 @@ public class StaggeredGridView extends ViewGroup {
                 }
 
                 mTouchMode = TOUCH_MODE_IDLE;
+                reportScrollStateChange(OnScrollListener.SCROLL_STATE_IDLE);
                 break;
 
             case MotionEvent.ACTION_UP: {
@@ -533,12 +546,14 @@ public class StaggeredGridView extends ViewGroup {
 
                 if (Math.abs(velocity) > mFlingVelocity) { // TODO
                     mTouchMode = TOUCH_MODE_FLINGING;
+                    reportScrollStateChange(OnScrollListener.SCROLL_STATE_FLING);
                     mScroller.fling(0, 0, 0, (int) velocity, 0, 0,
                             Integer.MIN_VALUE, Integer.MAX_VALUE);
                     mLastTouchY = 0;
                     invalidate();
                 } else {
                     mTouchMode = TOUCH_MODE_IDLE;
+                    reportScrollStateChange(OnScrollListener.SCROLL_STATE_IDLE);
                 }
 
                 if (!mDataChanged && mAdapter!=null && mAdapter.isEnabled(motionPosition)) {
@@ -680,6 +695,8 @@ public class StaggeredGridView extends ViewGroup {
             mSelectorRect.setEmpty();
         }
 
+        invokeOnItemScrollListener();
+
         return deltaY == 0 || movedBy != 0;
     }
 
@@ -819,6 +836,7 @@ public class StaggeredGridView extends ViewGroup {
                     mScroller.abortAnimation();
                 }
                 mTouchMode = TOUCH_MODE_IDLE;
+                reportScrollStateChange(OnScrollListener.SCROLL_STATE_IDLE);
             }
         }
     }
@@ -2577,6 +2595,32 @@ public class StaggeredGridView extends ViewGroup {
         }
         mOnItemLongClickListener = listener;
     }
+
+    /**
+     * Register a callback to be invoked when a list is scrolled
+     *
+     * @param listener The callback that will be called
+     */
+    public void setOnScrollListener(OnScrollListener listener) {
+        mOnScrollListener = listener;
+        invokeOnItemScrollListener();
+    }
+
+    private void invokeOnItemScrollListener() {
+        if (mOnScrollListener != null) {
+            mOnScrollListener.onScroll(this, mFirstPosition, getChildCount(), mItemCount);
+        }
+    }
+
+    private void reportScrollStateChange(int newState) {
+        if (newState != mLastScrollState) {
+            if (mOnScrollListener != null) {
+                mLastScrollState = newState;
+                mOnScrollListener.onScrollStateChanged(this, newState);
+            }
+        }
+    }
+
 
     /**
      * @return The callback to be invoked with an item in this AdapterView has
