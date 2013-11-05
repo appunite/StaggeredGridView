@@ -151,6 +151,7 @@ public class StaggeredGridView extends ViewGroup {
 	private static final int TOUCH_MODE_REST = 6;
 
 	private static final int INVALID_POSITION = -1;
+    private static final long INVALID_ITEM_ID = -1L;
 
     private int mTouchMode;
     private final VelocityTracker mVelocityTracker = VelocityTracker.obtain();
@@ -773,6 +774,7 @@ public class StaggeredGridView extends ViewGroup {
 
             mRecycler.addScrap(child);
             mFirstPosition++;
+            mFirstAdapterId = mAdapter.getItemId(mFirstPosition);
         }
 
         final int childCount = getChildCount();
@@ -1309,6 +1311,7 @@ public class StaggeredGridView extends ViewGroup {
 
             nextCol = getNextColumnUp();
             mFirstPosition = position--;
+            mFirstAdapterId = mAdapter.getItemId(mFirstPosition);
         }
 
         int highestView = getHeight();
@@ -1758,6 +1761,7 @@ public class StaggeredGridView extends ViewGroup {
 
         // Reset the first visible position in the grid to be item 0
         mFirstPosition = 0;
+        mFirstAdapterId = INVALID_ITEM_ID;
         if(mRestoreOffsets!=null)
         Arrays.fill(mRestoreOffsets, 0);
     }
@@ -1849,6 +1853,7 @@ public class StaggeredGridView extends ViewGroup {
         super.onRestoreInstanceState(ss.getSuperState());
         mDataChanged = true;
         mFirstPosition = ss.position;
+        mFirstAdapterId = INVALID_ITEM_ID;
         mRestoreOffsets = ss.topOffsets;
 
         ArrayList<ColMap> convert = ss.mapping;
@@ -2057,6 +2062,7 @@ public class StaggeredGridView extends ViewGroup {
             // reset list if position does not exist or id for position has changed
             if(mFirstPosition > mItemCount-1 || mAdapter.getItemId(mFirstPosition) != mFirstAdapterId){
             	mFirstPosition = 0;
+                mFirstAdapterId = INVALID_ITEM_ID;
             	Arrays.fill(mItemTops, 0);
             	Arrays.fill(mItemBottoms, 0);
 
