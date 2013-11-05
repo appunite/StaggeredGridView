@@ -1051,7 +1051,7 @@ public class StaggeredGridView extends ViewGroup {
                 if(newView == null){
                 	// child has been removed
                 	removeViewAt(i);
-                	if(i-1>=0) invalidateLayoutRecordsAfterPosition(i-1);
+                    mLayoutRecords.remove(position);
                 	amountRemoved++;
                     i--;
                 	continue;
