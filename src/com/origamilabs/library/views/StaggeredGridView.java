@@ -21,11 +21,6 @@ package com.origamilabs.library.views;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import com.origamilabs.library.R;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -57,6 +52,11 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.ListAdapter;
+
+import com.origamilabs.library.R;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * ListView and GridView just not complex enough? Try StaggeredGridView!
@@ -983,7 +983,12 @@ public class StaggeredGridView extends ViewGroup {
 
         final int top = getPaddingTop();
         for(int i = 0; i<colCount; i++){
-        	final int offset =  top + ((mRestoreOffsets != null)? Math.min(mRestoreOffsets[i], 0) : 0);
+        	final int offset;
+            if (mRestoreOffsets != null && mRestoreOffsets.length > i + 1) {
+                offset = top + Math.min(mRestoreOffsets[i], 0);
+            } else {
+                offset = top;
+            }
         	mItemTops[i] = (offset == 0) ? mItemTops[i] : offset;
         	mItemBottoms[i] = (offset == 0) ? mItemBottoms[i] : offset;
         }
@@ -997,8 +1002,9 @@ public class StaggeredGridView extends ViewGroup {
         mDataChanged = false;
 
         if(clearData){
-        	if(mRestoreOffsets!=null)
+        	if(mRestoreOffsets!=null) {
         		Arrays.fill(mRestoreOffsets,0);
+            }
         }
     }
 
@@ -1763,8 +1769,9 @@ public class StaggeredGridView extends ViewGroup {
         // Reset the first visible position in the grid to be item 0
         mFirstPosition = 0;
         mFirstAdapterId = INVALID_ITEM_ID;
-        if(mRestoreOffsets!=null)
-        Arrays.fill(mRestoreOffsets, 0);
+        if(mRestoreOffsets!=null) {
+            Arrays.fill(mRestoreOffsets, 0);
+        }
     }
 
     /**
