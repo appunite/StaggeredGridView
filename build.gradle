@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.+'
+        classpath 'com.android.tools.build:gradle:0.10.+'
     }
 }
 
@@ -22,12 +22,17 @@ configurations {
 
 dependencies {
     deployerJars 'com.googlesource.gerrit:gs-maven-wagon:3.3.1'
-    compile "com.appunite:android-support-v4:[7,)"
+    compile 'com.android.support:support-v4:[18,)'
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "18.0.1"
+    compileSdkVersion 19
+    buildToolsVersion "19.1"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 19
+    }
 
     sourceSets {
         main {
@@ -42,7 +47,8 @@ android {
     }
 }
 
-version = "1.4.1"
+version = "1.5.1"
+
 archivesBaseName = "library"
 group = "com.origamilabs"
 
@@ -107,5 +113,5 @@ uploadArchives {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.8'
+    gradleVersion = '1.11'
 }
