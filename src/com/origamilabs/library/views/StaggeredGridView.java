@@ -51,8 +51,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.AbsListView;
 import android.widget.ListAdapter;
-
 import com.origamilabs.library.R;
 
 import java.util.ArrayList;
@@ -1963,6 +1963,8 @@ public class StaggeredGridView extends ViewGroup {
     }
 
     private class RecycleBin {
+        private AbsListView.RecyclerListener mRecyclerListener;
+
         private ArrayList<View>[] mScrapViews;
         private int mViewTypeCount;
         private int mMaxScrap;
@@ -1991,6 +1993,12 @@ public class StaggeredGridView extends ViewGroup {
         public void clear() {
             final int typeCount = mViewTypeCount;
             for (int i = 0; i < typeCount; i++) {
+                if (mRecyclerListener != null) {
+                    for (View scrapView : mScrapViews[i]) {
+                        mRecyclerListener.onMovedToScrapHeap(scrapView);
+                    }
+                }
+
                 mScrapViews[i].clear();
             }
             if (mTransientStateViews != null) {
@@ -2022,6 +2030,9 @@ public class StaggeredGridView extends ViewGroup {
             ArrayList<View> scrap = mScrapViews[lp.viewType];
             if (scrap.size() < mMaxScrap) {
                 scrap.add(v);
+            }
+            if (mRecyclerListener != null) {
+                mRecyclerListener.onMovedToScrapHeap(v);
             }
         }
 
@@ -2701,4 +2712,9 @@ public class StaggeredGridView extends ViewGroup {
 	public void setDrawSelectorOnTop(boolean mDrawSelectorOnTop) {
 		this.mDrawTopSelector = mDrawSelectorOnTop;
 	}
+
+
+    public void setRecyclerListener(AbsListView.RecyclerListener listener) {
+        mRecycler.mRecyclerListener = listener;
+    }
 }
