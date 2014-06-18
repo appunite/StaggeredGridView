@@ -47,7 +47,7 @@ android {
     }
 }
 
-version = "1.5.2"
+version = "1.5.3"
 
 archivesBaseName = "library"
 group = "com.origamilabs"

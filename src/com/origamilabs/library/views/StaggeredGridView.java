@@ -243,6 +243,9 @@ public class StaggeredGridView extends ViewGroup {
      */
     private Rect mTouchFrame;
 
+
+    private boolean mClipToPadding = true;
+
     private static final class LayoutRecord {
         public int column;
         public long id = -1;
@@ -721,7 +724,17 @@ public class StaggeredGridView extends ViewGroup {
             }
         }
 
-        return topmost >= getPaddingTop() && bottommost <= getHeight() - getPaddingBottom();
+        final int gridBottom;
+        final int gridTop;
+        if (mClipToPadding) {
+            gridTop = getPaddingTop();
+            gridBottom = getHeight() - getPaddingBottom();
+        } else {
+            gridTop = 0;
+            gridBottom = getHeight();
+        }
+
+        return topmost >= gridTop && bottommost <= gridBottom;
     }
 
     private void recycleAllViews() {
@@ -985,16 +998,15 @@ public class StaggeredGridView extends ViewGroup {
             }
         }
 
-        final int top = getPaddingTop();
-        for(int i = 0; i<colCount; i++){
-        	final int offset;
-            if (mRestoreOffsets != null && mRestoreOffsets.length > i + 1) {
-                offset = top + Math.min(mRestoreOffsets[i], 0);
-            } else {
-                offset = top;
+        if (mRestoreOffsets != null) {
+            final int top = getPaddingTop();
+            for (int i = 0; i < colCount; i++) {
+                if (mRestoreOffsets.length > i + 1) {
+                    final int offset = top + Math.min(mRestoreOffsets[i], 0);
+                    mItemTops[i] = (offset == 0) ? mItemTops[i] : offset;
+                    mItemBottoms[i] = (offset == 0) ? mItemBottoms[i] : offset;
+                }
             }
-        	mItemTops[i] = (offset == 0) ? mItemTops[i] : offset;
-        	mItemBottoms[i] = (offset == 0) ? mItemBottoms[i] : offset;
         }
 
         mPopulating = true;
@@ -1191,15 +1203,20 @@ public class StaggeredGridView extends ViewGroup {
      * @return the max overhang beyond the beginning of the view of any added items at the top
      */
     final int fillUp(int fromPosition, int overhang) {
-
         final int paddingLeft = getPaddingLeft();
         final int paddingRight = getPaddingRight();
         final int itemMargin = mItemMargin;
         final int colWidth =
                 (getWidth() - paddingLeft - paddingRight - itemMargin * (mColCount - 1)) / mColCount;
         mColWidth = colWidth;
-        final int gridTop = getPaddingTop();
-        final int fillTo = gridTop - overhang;
+        final int gridTop;
+        gridTop = getPaddingTop();
+        final int fillTo;
+        if (mClipToPadding) {
+            fillTo = gridTop - overhang;
+        } else {
+            fillTo = - overhang;
+        }
         int nextCol = getNextColumnUp();
         int position = fromPosition;
 
@@ -1389,7 +1406,12 @@ public class StaggeredGridView extends ViewGroup {
         final int paddingRight = getPaddingRight();
         final int itemMargin = mItemMargin;
         final int colWidth = (getWidth() - paddingLeft - paddingRight - itemMargin * (mColCount - 1)) / mColCount;
-        final int gridBottom = getHeight() - getPaddingBottom();
+        final int gridBottom;
+        if (mClipToPadding) {
+            gridBottom = getHeight() - getPaddingBottom();
+        } else {
+            gridBottom = getHeight();
+        }
         final int fillTo = gridBottom + overhang;
         int nextCol = getNextColumnDown(fromPosition);
         int position = fromPosition;
@@ -1773,7 +1795,7 @@ public class StaggeredGridView extends ViewGroup {
         // Reset the first visible position in the grid to be item 0
         mFirstPosition = 0;
         mFirstAdapterId = INVALID_ITEM_ID;
-        if(mRestoreOffsets!=null) {
+        if (mRestoreOffsets != null) {
             Arrays.fill(mRestoreOffsets, 0);
         }
     }
@@ -2084,13 +2106,7 @@ public class StaggeredGridView extends ViewGroup {
 
             // reset list if position does not exist or id for position has changed
             if(mFirstPosition > mItemCount-1 || mAdapter.getItemId(mFirstPosition) != mFirstAdapterId){
-            	mFirstPosition = 0;
-                mFirstAdapterId = INVALID_ITEM_ID;
-            	Arrays.fill(mItemTops, 0);
-            	Arrays.fill(mItemBottoms, 0);
-
-            	if(mRestoreOffsets!=null)
-            	Arrays.fill(mRestoreOffsets, 0);
+                resetStateForGridTop();
             }
 
             // TODO: consider repopulating in a deferred runnable instead
@@ -2703,6 +2719,12 @@ public class StaggeredGridView extends ViewGroup {
             }
         }
         return INVALID_POSITION;
+    }
+
+    @Override
+    public void setClipToPadding(boolean clipToPadding) {
+        super.setClipToPadding(clipToPadding);
+        mClipToPadding = clipToPadding;
     }
 
 	public boolean isDrawSelectorOnTop() {
