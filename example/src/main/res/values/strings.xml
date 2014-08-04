@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StaggeredGridView</string>
+
+    <!-- labels -->
+    <string name="button_base_example">Base example</string>
+    <string name="label_gridview">BaseExample</string>
+</resources>
