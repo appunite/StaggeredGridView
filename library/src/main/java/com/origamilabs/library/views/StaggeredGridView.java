@@ -466,7 +466,6 @@ public class StaggeredGridView extends ViewGroup {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-
                 mVelocityTracker.clear();
                 mScroller.abortAnimation();
                 mLastTouchY = ev.getY();
@@ -493,8 +492,6 @@ public class StaggeredGridView extends ViewGroup {
                 break;
 
             case MotionEvent.ACTION_MOVE: {
-
-
                 final int index = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
                 if (index < 0) {
                     Log.e(TAG, "onInterceptTouchEvent could not find pointer with id " +
@@ -2310,6 +2307,20 @@ public class StaggeredGridView extends ViewGroup {
         return state;
     }
 
+    /**
+     * Check if this view can be scrolled vertically in a certain direction.
+     *
+     * @param direction Negative to check scrolling up, positive to check scrolling down.
+     * @return true if this view can be scrolled in the specified direction, false otherwise.
+     */
+    @Override
+    public boolean canScrollVertically(int direction) {
+        if (direction < 0) {
+            return getFirstPosition() != 0;
+        } else {
+            return ViewCompat.canScrollVertically(this, direction);
+        }
+    }
 
     private void positionSelector(int l, int t, int r, int b) {
         mSelectorRect.set(l - mSelectionLeftPadding, t - mSelectionTopPadding, r

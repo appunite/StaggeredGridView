@@ -11,10 +11,18 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
         findViewById(R.id.button_base_example).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, GridActivity.class));
+            }
+        });
+
+        findViewById(R.id.button_pull_to_refresh_example).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, PullToRefreshActivity.class));
             }
         });
     }

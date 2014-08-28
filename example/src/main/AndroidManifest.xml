@@ -17,5 +17,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".GridActivity" android:label="@string/label_gridview"/>
+        <activity android:name=".PullToRefreshActivity" android:label="@string/label_gridview_with_pull"/>
     </application>
 </manifest> 

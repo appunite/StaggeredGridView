@@ -5,4 +5,6 @@
     <!-- labels -->
     <string name="button_base_example">Base example</string>
     <string name="label_gridview">BaseExample</string>
+    <string name="button_pull_to_refresh_example">Pull to refresh example</string>
+    <string name="label_gridview_with_pull">Pull to refresh</string>
 </resources>
