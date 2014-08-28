@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:19.1.0'
+    compile 'com.android.support:appcompat-v7:20.0.0'
     compile project(":library")
     //compile "com.origamilabs:library:1.5.3"
 }
