@@ -22,7 +22,7 @@ configurations {
 
 dependencies {
     deployerJars 'com.googlesource.gerrit:gs-maven-wagon:3.3.1'
-    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.android.support:support-v4:20.0.0'
 }
 
 android {
@@ -35,7 +35,7 @@ android {
     }
 }
 
-version = "1.5.4"
+version = "1.5.5"
 
 archivesBaseName = "library"
 group = "com.origamilabs"
