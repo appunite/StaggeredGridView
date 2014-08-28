@@ -2316,7 +2316,7 @@ public class StaggeredGridView extends ViewGroup {
     @Override
     public boolean canScrollVertically(int direction) {
         if (direction < 0) {
-            final boolean firstItemAtTop = mItemTops.length == 0 || mItemTops[0] == 0;
+            final boolean firstItemAtTop = mItemTops.length == 0 || mItemTops[0] == getPaddingTop();
             return !(getFirstPosition() == 0 && firstItemAtTop);
         } else {
             return ViewCompat.canScrollVertically(this, direction);
